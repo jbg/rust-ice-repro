@@ -1,0 +1,12 @@
+[package]
+name = "repro"
+version = "0.1.0"
+authors = ["Jasper <jbg@rf.net.nz>"]
+edition = "2018"
+
+[dependencies]
+bytes = "0.4.12"
+futures-preview = { version = "0.3.0-alpha.17", features = ["compat", "async-await", "nightly"] }
+qutex = "0.2.3"
+rand = "*"
+tokio = { git = "https://github.com/tokio-rs/tokio" }
