@@ -27,9 +27,13 @@ impl Foo {
   async fn go(&self, b: BytesMut) -> Result<(), ()> {
     let mut inner = self.inner.clone().write().compat().await.unwrap();
     let b = b.freeze();
+
+    // Reverse the order of the next two lines and it builds successfully.
     let mut c = Cursor::new(b);
     let mut v = Vec::new();
+
     c.read_until(0x2c, &mut v).unwrap();
+   
     inner.go(v[0]).await.unwrap();
     Ok(())
   }
