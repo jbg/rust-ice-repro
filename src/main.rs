@@ -1,11 +1,15 @@
 #![feature(async_await)]
 
+mod qrw_lock;
+
 use std::io::{BufRead, Cursor};
 
 use bytes::BytesMut;
+use futures::future::TryFutureExt;
 use futures::compat::Future01CompatExt;
-use qutex::QrwLock;
 use rand::Rng;
+
+use crate::qrw_lock::QrwLock;
 
 
 struct FooInner {
@@ -25,10 +29,13 @@ struct Foo {
 
 impl Foo {
   async fn go(&self, b: BytesMut) -> Result<(), ()> {
-    let mut inner = self.inner.clone().write().compat().await.unwrap();
+    let mut inner = self.inner.clone().write()
+      .compat().compat()  // <----- remove this line and it builds successfully...
+    .await.unwrap();
     let b = b.freeze();
 
-    // Reverse the order of the next two lines and it builds successfully.
+    // ... or reverse the order of the next two lines and it builds successfully (even with the
+    //     above line left in)
     let mut c = Cursor::new(b);
     let mut v = Vec::new();
 
